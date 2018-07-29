@@ -19,8 +19,8 @@ body{
     float: left;
 }
 .logo_text{
-    font-family: acme;
-    font-size: 16px;
+    font-family:'Inconsolata';
+    font-size: 24px;
     font-weight: bold;
     color: white;
     text-align: center;
@@ -28,21 +28,31 @@ body{
 .author_logo_text{
     text-align: right;
     margin-right: 20px;
-    font-family: acme;
+    font-family: 'Inconsolata';
     color: white;
 }
 .lhs_container,.rhs_container{
     width: 43%;
     box-shadow: 1px 2px 8px #a5a5a5;
     float: left;
-    font-family:jura;
-    padding-top:10px;
+    font-family: 'Source Code Pro';
+    font-size: 18px;
+    padding-top: 10px;
     padding-bottom: 10px;
 }
 .cs_container{
     width: 10%;
     float: left;  
 }
+.right_arrow_container{
+    position:relative;
+    left:35%;
+}
+.rightArrow_img{
+    width: 60px;
+    cursor:pointer;
+}
+
 *{
    /*  outline:1px solid black; */
 }
