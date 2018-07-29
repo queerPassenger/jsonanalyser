@@ -12,7 +12,7 @@ class JSONAnalyser extends React.Component{
         this.count=-1;
         this.collapseSet=[];
         this.collapseFlag=true;
-        
+
         this.style={
             container:{
                 minHeight:window.innerHeight-(66+58)-20,
@@ -70,6 +70,29 @@ class JSONAnalyser extends React.Component{
         }
         this.renderComponent();
     }
+    handleCollExp(){
+        let newSet=[];
+        this.collapseSet.map((obj)=>{
+            newSet.push(this.collapseFlag);
+        })
+        this.collapseSet=newSet;
+        this.renderComponent();
+    }
+    handleCollapse(count){
+        this.collapseSet[count]=!this.collapseSet[count];
+        this.renderComponent();
+    }
+    valueHint(type,actualVal){
+        let valHint="";
+        if(type==='Object'){
+            let keys=Object.keys(actualVal);
+            valHint='Object '+'{'+keys.length+'}';
+        }
+        else if(type==='Array'){
+            valHint='Array '+'['+actualVal.length+']';
+        }
+        return valHint;
+    }
     handleAnalyser(){
        var innerText = this.refs['lhs'].innerText  // using innerText here because it preserves newlines
         if(innerText[innerText.length-1] === '\n') {
@@ -81,8 +104,120 @@ class JSONAnalyser extends React.Component{
         this.jsonToAnalyse=jsonOutput;
         this.renderComponent();
     }
-    analyser(){
+    analyser(val){
+        let randStr=Math.random().toString(36).substring(7);
+        let type=Object.prototype.toString.call(val).split(' ')[1].replace(']','');
         
+        if(type==='String' || type==='Number' || type==='Date' || type==='Null' || type==='Boolean'){
+            return(
+                <div className="value_wrapper" style={this.analysedStyle['valueStyle']}>
+                    {' '+val}
+                </div>
+            )
+        }
+        else if(type==='Object'){
+            let keys=Object.keys(val);
+            return(
+                <div className="object_parent_wrapper" style={this.style['object_parent_wrapper']} >
+                    {keys.map((key,ind)=>{
+                        let subType=Object.prototype.toString.call(val[key]).split(' ')[1].replace(']','');
+                        let flag=(subType==='String' || subType==='Number' || subType==='Date' || subType==='Null' || subType==='Boolean')?true:false;
+                        this.count++;
+                        let count=this.count;
+                        
+                        if(!(this.collapseSet[count])){
+                            this.collapseSet.push(true);
+                        }
+                        if(flag){
+                            this.collapseSet[count]=false;
+                        }
+                        return(
+                            <div className="object-wrapper" style={this.analysedStyle['object_parent_wrapper']} key={randStr+ind}>
+                                <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} onClick={this.handleCollapse.bind(this,count)} >
+                                    {!flag?
+                                        this.collapseSet[count]?
+                                            <img src="img/expandIcon.png" width='25'></img>
+                                        :
+                                            <img src="img/collapseIcon.png" width='25'></img>
+                                    :
+                                        null
+                                    }
+                                </div>
+                                <div className="object-key" style={flag?this.analysedStyle['keyIndStyle']:this.analysedStyle['keyIndFloatStyle']} >
+                                    {(flag?(key+' : '):key)}
+                                </div>
+                                {!flag?
+                                    <span className="valHint" style={this.analysedStyle['valHint']} >
+                                        {this.valueHint(subType,val[key])}
+                                    </span>
+                                :
+                                    null
+                                }
+                                <div className='' style={this.collapseSet[count]?this.analysedStyle['hide']:{}}>
+                                    <div className="object-val" style={flag?this.analysedStyle['valStyle']:{}}>
+                                        {this.analyser(val[key])}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            )
+        }
+        else if(type==='Array'){
+            return(
+                <div className="array_parent_wrapper" style={this.style['array_parent_wrapper']} >
+                    {val.map((json,ind)=>{
+                        let subType=Object.prototype.toString.call(json).split(' ')[1].replace(']','');
+                        let flag=(subType==='String' || subType==='Number' || subType==='Date' || subType==='Null' || subType==='Boolean')?true:false;
+                        this.count++;
+                        let count=this.count;
+                        
+                        if(!(this.collapseSet[count])){
+                            this.collapseSet.push(true);
+                        }
+                        if(flag){
+                            this.collapseSet[count]=false;
+                        }
+                        return(
+                            <div className="array-wrapper" style={this.analysedStyle['object_parent_wrapper']} key={randStr+ind}>
+                                <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} onClick={this.handleCollapse.bind(this,count)} >
+                                    {!flag?
+                                        this.collapseSet[count]?
+                                            <img src="img/expandIcon.png" width='25'></img>
+                                        :
+                                            <img src="img/collapseIcon.png" width='25'></img>
+                                    :
+                                        null
+                                    }
+                                </div>
+                                <div className="array-ind" style={flag?this.analysedStyle['keyIndStyle']:this.analysedStyle['keyIndFloatStyle']} >
+                                    {(flag?(ind+' : '):ind)}
+                                </div>
+                                {!flag?
+                                    <span className="valHint" style={this.analysedStyle['valHint']} >
+                                        {this.valueHint(subType,json)}
+                                    </span>
+                                :
+                                    null
+                                }
+                                <div className='' style={this.collapseSet[count]?this.analysedStyle['hide']:{}}>
+                                    <div className="array-val" style={flag?this.analysedStyle['valStyle']:{}}>
+                                        {this.analyser(json)}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            )
+        }
+        else{
+            return(
+                <div>
+                </div>
+            )
+        }
     }
     renderComponent(){
         this.setState({
@@ -90,6 +225,7 @@ class JSONAnalyser extends React.Component{
         })
     }
     render(){
+        console.log("JSONAnalyser",this);
         return(
             <div className="jsonanalyser_container" style={this.style['container']}>
                 <div className="lhs_container" ref="lhs" contentEditable={"true"} style={this.style['container']}>
@@ -99,8 +235,8 @@ class JSONAnalyser extends React.Component{
                         <img src="img/rightArrow.png" className="rightArrow_img"></img>
                     </div>
                 </div>
-                <div className="rhs_container" contentEditable={"true"} style={this.style['container']}>
-                    {this.analyser()}
+                <div className="rhs_container" style={this.style['container']}>
+                    {this.analyser(this.jsonToAnalyse)}
                 </div>
             </div>
         )
