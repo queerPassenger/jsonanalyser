@@ -140,7 +140,7 @@ class JSONAnalyser extends React.Component{
                                 <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} onClick={this.handleCollapse.bind(this,count)} >
                                     {!flag?
                                         this.collapseSet[count]?
-                                            <img src="img/expandIcon.png" width='30'></img>
+                                            <img src="img/expandIcon.png" width='27'></img>
                                         :
                                             <img src="img/collapseIcon.png" width='25'></img>
                                     :
@@ -188,7 +188,7 @@ class JSONAnalyser extends React.Component{
                                 <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} onClick={this.handleCollapse.bind(this,count)} >
                                     {!flag?
                                         this.collapseSet[count]?
-                                            <img src="img/expandIcon.png" width='30'></img>
+                                            <img src="img/expandIcon.png" width='27'></img>
                                         :
                                             <img src="img/collapseIcon.png" width='25'></img>
                                     :
