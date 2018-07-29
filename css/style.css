@@ -1,0 +1,38 @@
+body{
+    margin:0px;
+}
+.header_container,.jsonanalyser_container,.footer_container{
+    width:100%;
+    float:left;
+}
+.header_container,.footer_container{
+    padding-top: 21px;
+    padding-bottom: 21px;
+    background: #797979;
+    border-radius: 4px;
+    box-shadow: 1px 2px 8px #a5a5a5;
+}
+.logo_text{
+    font-family: jura;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+.author_logo_text{
+    text-align: right;
+    margin-right: 20px;
+    font-family: jura;
+    color: white;
+}
+.lhs_container,.rhs_container{
+    width: 45%;
+    box-shadow: 1px 2px 8px #a5a5a5;
+    float: left;
+    height: -webkit-fill-available;
+}
+.cs_container{
+    width: 10%;
+    float: left;
+    height: -webkit-fill-available;
+}
