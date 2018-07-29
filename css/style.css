@@ -37,8 +37,9 @@ body{
     float: left;
     font-family: 'Source Code Pro';
     font-size: 18px;
-    padding-top: 10px;
+    padding-top: 35px;
     padding-bottom: 10px;
+    overflow:auto;
 }
 .cs_container{
     width: 10%;
@@ -47,6 +48,7 @@ body{
 .right_arrow_container{
     position:relative;
     left:35%;
+    float:left;
 }
 .rightArrow_img{
     width: 60px;
