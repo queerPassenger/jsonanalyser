@@ -12,8 +12,14 @@ body{
     border-radius: 4px;
     box-shadow: 1px 2px 8px #a5a5a5;
 }
+.jsonanalyser_container{
+    padding-left: 4%;
+    padding-right: 2%;
+    width: 94%;
+    float: left;
+}
 .logo_text{
-    font-family: jura;
+    font-family: acme;
     font-size: 16px;
     font-weight: bold;
     color: white;
@@ -22,17 +28,21 @@ body{
 .author_logo_text{
     text-align: right;
     margin-right: 20px;
-    font-family: jura;
+    font-family: acme;
     color: white;
 }
 .lhs_container,.rhs_container{
-    width: 45%;
+    width: 43%;
     box-shadow: 1px 2px 8px #a5a5a5;
     float: left;
-    height: -webkit-fill-available;
+    font-family:jura;
+    padding-top:10px;
+    padding-bottom: 10px;
 }
 .cs_container{
     width: 10%;
-    float: left;
-    height: -webkit-fill-available;
+    float: left;  
+}
+*{
+   /*  outline:1px solid black; */
 }
