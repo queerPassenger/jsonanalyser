@@ -6,10 +6,9 @@ const bodyParser=require('body-parser');
 /* const cookieParser=require('cookie-parser'); */
 
 
-server.listen(8080,()=>{
-  console.log('listening 80801');
+server.listen(process.env.PORT || 3000 ,function(){
+  console.log("up and running on port "+process.env.PORT);
 });
-
  app.use(bodyParser.urlencoded({
      extended: true
  }));
