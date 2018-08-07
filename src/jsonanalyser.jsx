@@ -11,11 +11,11 @@ class JSONAnalyser extends React.Component{
 
         this.count=-1;
         this.collapseSet=[];
-        this.collapseFlag=true;
+        this.collapseFlag=false;
 
         this.style={
             container:{
-               height:window.innerHeight-(66+58),         
+               height:window.innerHeight-(66+58)-5,         
                background:'#e8e8e8',     
             },
             innerContainer:{
@@ -79,14 +79,15 @@ class JSONAnalyser extends React.Component{
         }
         this.renderComponent();
     }
-   /*  handleCollExp(){
+    handleCollExp(){
+        this.collapseFlag=!this.collapseFlag;
         let newSet=[];
         this.collapseSet.map((obj)=>{
             newSet.push(this.collapseFlag);
         })
         this.collapseSet=newSet;
         this.renderComponent();
-    } */
+    } 
     handleCollapse(count){
         console.log('COunt',count);
         this.collapseSet[count]=!this.collapseSet[count];
@@ -255,6 +256,7 @@ class JSONAnalyser extends React.Component{
                         <span className="lhs_header_title">
                             Input
                         </span>
+                       
                     </div>
                     <div className="lhs_editor" ref="lhs" contentEditable={"true"} style={this.style['editor']}>
                     </div>
@@ -269,6 +271,9 @@ class JSONAnalyser extends React.Component{
                     <div className="rhs_header">
                         <span className="rhs_header_title">
                             Output
+                        </span>
+                        <span className="rhs_collapseExpand" onClick={this.handleCollExp.bind(this)}>
+                            <img src={this.collapseFlag?"img/collapseAll.png":"img/expandAll.png"} width="20"></img>
                         </span>
                     </div>
                     <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} onClick={this.handleCollapse.bind(this,count)} >

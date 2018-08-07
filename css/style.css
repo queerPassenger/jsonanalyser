@@ -57,6 +57,10 @@ body{
     width: 100%;
     overflow:auto;
 }
+.rhs_collapseExpand{
+    float: right;
+    margin-right: 4%;
+}
 .cs_container{
     width: 10%;
     float: left;  
@@ -65,7 +69,7 @@ body{
 button{
     padding-top: 10px;
     padding-bottom: 11px;
-    width: 160px;
+    width: 85%;
     float: left;
     font-family: monospace;
     font-size: 19px;
@@ -79,6 +83,7 @@ button{
     position:relative;
     left:8%;
     float:left;
+    width:100%
 }
 .rightArrow_img{
     width: 60px;
