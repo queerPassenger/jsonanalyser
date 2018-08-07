@@ -22,7 +22,8 @@
   "scripts": {
     "dev": "webpack-dev-server --progress --colors",
     "build": "webpack -p",
-    "bb": "webpack -p && node server.js"
+    "bb": "webpack -p && node server.js",
+    "start":"node server.js"
   },
   "keywords": [],
   "author": "",
