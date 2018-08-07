@@ -15,13 +15,19 @@ class JSONAnalyser extends React.Component{
 
         this.style={
             container:{
-               height:window.innerHeight-(66+58),              
+               height:window.innerHeight-(66+58),         
+               background:'#e8e8e8',     
             },
             innerContainer:{
-                height:window.innerHeight-(66+58)-45,
+                height:window.innerHeight-(66+58)-45-80,
+                marginTop:40,
+                marginBottom:40
+            },
+            editor:{
+                height:window.innerHeight-(66+58)-45-80-50
             },
             right_arrow_container:{
-                top:((window.innerHeight-(66+58)-45)/2),               
+                top:((window.innerHeight-(66+58)-45)/2)-50,               
             }
         }
         this.analysedStyle={
@@ -244,14 +250,27 @@ class JSONAnalyser extends React.Component{
         }
         return(
             <div className="jsonanalyser_container" style={this.style['container']}>
-                <div className="lhs_container" ref="lhs" contentEditable={"true"} style={this.style['innerContainer']}>
+                <div className="lhs_container" style={this.style['innerContainer']}>
+                    <div className="lhs_header">
+                        <span className="lhs_header_title">
+                            Input
+                        </span>
+                    </div>
+                    <div className="lhs_editor" ref="lhs" contentEditable={"true"} style={this.style['editor']}>
+                    </div>
                 </div>
                 <div className="cs_container" style={this.style['innerContainer']}>
-                    <div className="right_arrow_container" style={this.style['right_arrow_container']} onClick={this.handleAnalyser.bind(this)}>
-                        <img src="img/rightArrow.png" className="rightArrow_img"></img>
+                    <div className="right_arrow_container" style={this.style['right_arrow_container']}>
+                       {/*  <img src="img/rightArrow.png" className="rightArrow_img"></img> */}
+                       <button  onClick={this.handleAnalyser.bind(this)}>Analyse</button>
                     </div>
                 </div>
                 <div className="rhs_container" style={this.style['innerContainer']}>
+                    <div className="rhs_header">
+                        <span className="rhs_header_title">
+                            Output
+                        </span>
+                    </div>
                     <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} onClick={this.handleCollapse.bind(this,count)} >
                         {!flag?
                             this.collapseSet[count]?
