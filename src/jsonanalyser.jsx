@@ -30,9 +30,11 @@ class JSONAnalyser extends React.Component{
                 top:this.getHeight(((window.innerHeight-(66+58)-45)/2)-50),               
             }
         }
-        this.analysedStyle={
-
-        };
+        this.analysedStyle={};
+        this.searchedWord={
+            input:"",
+            toSearch:""
+        }
     }
     componentDidMount(){
         this.computeAnalysedStyle();
@@ -57,7 +59,8 @@ class JSONAnalyser extends React.Component{
         this.analysedStyle['valueStyle']={
             fontSize:'18px',
             fontFamily:'Source Code Pro',
-            fontWeight:'bold'
+            fontWeight:'bold',
+            display:'inline-block'
         };
         this.analysedStyle['collapsable-icon']={
             width:'30px',
@@ -87,8 +90,13 @@ class JSONAnalyser extends React.Component{
             return height;
         }
     }
-    handleCollExp(){
-        this.collapseFlag=!this.collapseFlag;
+    handleCollExp(flag){
+        if(flag){
+            this.collapseFlag=!this.collapseFlag;
+        }
+        else{
+            this.collapseFlag=flag
+        }
         let newSet=[];
         this.collapseSet.map((obj)=>{
             newSet.push(this.collapseFlag);
@@ -125,13 +133,26 @@ class JSONAnalyser extends React.Component{
           
         this.renderComponent();
     }
+    handleInput(objKey){
+        this[objKey].input=this.refs[objKey].value;
+        this.renderComponent();
+    }
+    handleKeyInput(e){
+        if(e.keyCode===13){
+            this.searchedWord.toSearch=this.searchedWord.input.trim();
+            this.handleCollExp(false);
+            this.renderComponent();
+        }
+    }
+    
     analyser(val){
         let randStr=Math.random().toString(36).substring(7);
         let type=Object.prototype.toString.call(val).split(' ')[1].replace(']','');
         
         if(type==='String' || type==='Number' || type==='Date' || type==='Null' || type==='Boolean'){
+            let count=this.count;
             return(
-                <div className="value_wrapper" style={this.analysedStyle['valueStyle']}>
+                <div className={"value_wrapper "+(this.searchedWord.toSearch==val?"highlight_search":"")} ref={"value_wrapper_"+count} style={this.analysedStyle['valueStyle']}>
                     {' '+val}
                 </div>
             )
@@ -286,6 +307,9 @@ class JSONAnalyser extends React.Component{
                         <span className="rhs_collapseExpand" onClick={this.handleCollExp.bind(this)}>
                             <img src={this.collapseFlag?"img/expandAll.png":"img/collapseAll.png"} width="20"></img>
                         </span>
+                        <span className="searchIcon">
+                            <input type="text" className="searchInput" placeholder="Search for key/value" ref="searchedWord" value={this.searchedWord.input} onKeyDown={this.handleKeyInput.bind(this)} onChange={this.handleInput.bind(this,'searchedWord')}></input>
+                        </span>                        
                     </div>
                     <div className="rhs_editor" style={this.style['editor']}>
                         <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} >

@@ -93,7 +93,22 @@ button{
     width: 60px;
     cursor:pointer;
 }
-
+.searchInput{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 7px;
+    border-width: 0px;
+    padding-left: 1%;
+    padding-right: 5%;
+    margin-top:-7px;
+    margin-bottom:-10px;
+    margin-right:2%;
+    font-family: monospace;
+    float: right;
+}
+.highlight_search{
+    background: #cecaca;
+}
 *{
    /*  outline:1px solid black; */
 }
