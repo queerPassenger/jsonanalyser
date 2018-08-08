@@ -33,7 +33,8 @@ class JSONAnalyser extends React.Component{
         this.analysedStyle={};
         this.searchedWord={
             input:"",
-            toSearch:""
+            toSearch:"",
+            matchedRefs:[],
         }
     }
     componentDidMount(){
@@ -125,7 +126,8 @@ class JSONAnalyser extends React.Component{
             innerText = innerText.slice(0,-1) ;          
             // get rid of weird extra newline
         }
-        let output=innerText.replace(/(\r\n\t|\n|\r\t|\s)/gm,"");
+        console.log("INNERTEXT",JSON.stringify(innerText));
+        let output=innerText.replace(/(\r\n\t|\n|\r\t|[^\S ]+)/gm,"");
         let jsonOutput=JSON.parse(output);
         this.jsonToAnalyse=jsonOutput;
         this.collapseFlag=true;
@@ -144,7 +146,13 @@ class JSONAnalyser extends React.Component{
             this.renderComponent();
         }
     }
-    
+    checkMatch(valueToCheck,ref){
+        let className="";
+        if(((valueToCheck+"").toLowerCase())===this.searchedWord.toSearch){
+            className="highlight_search";
+        }
+        return className;
+    }
     analyser(val){
         let randStr=Math.random().toString(36).substring(7);
         let type=Object.prototype.toString.call(val).split(' ')[1].replace(']','');
@@ -152,7 +160,7 @@ class JSONAnalyser extends React.Component{
         if(type==='String' || type==='Number' || type==='Date' || type==='Null' || type==='Boolean'){
             let count=this.count;
             return(
-                <div className={"value_wrapper "+(this.searchedWord.toSearch==val?"highlight_search":"")} ref={"value_wrapper_"+count} style={this.analysedStyle['valueStyle']}>
+                <div className={"value_wrapper "+this.checkMatch(val,"value_wrapper_"+count)} ref={"value_wrapper_"+count} style={this.analysedStyle['valueStyle']}>
                     {' '+val}
                 </div>
             )
