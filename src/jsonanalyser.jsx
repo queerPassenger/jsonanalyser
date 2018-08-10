@@ -35,9 +35,27 @@ class JSONAnalyser extends React.Component{
             input:"",
             toSearch:"",
             matchedRefs:[],
+            caseMatch:false,
+            wholeWordMatch:false,
         }
     }
     componentDidMount(){
+        this.refs['lhs'].innerText=JSON.stringify({
+            "array": [
+              1,
+              2,
+              3
+            ],
+            "boolean": true,
+            "null": null,
+            "number": 123,
+            "object": {
+              "a": "b",
+              "c": "d",
+              "e": "f"
+            },
+            "string": "Hello World"
+          })
         this.computeAnalysedStyle();
     }
     computeAnalysedStyle(){
@@ -126,8 +144,7 @@ class JSONAnalyser extends React.Component{
             innerText = innerText.slice(0,-1) ;          
             // get rid of weird extra newline
         }
-        /* console.log("INNERTEXT",JSON.stringify(innerText));
-        let output=innerText.replace(/(\r\n\t|\n|\r\t|[^\S ]+)/gm,""); */
+       // let output=innerText.replace(/(\r\n\t|\n|\r\t|[^\S ]+)/gm,""); 
         innerText=this.jsonFurnace(innerText);
         console.log(innerText);
         let jsonOutput=JSON.parse(innerText);
@@ -171,11 +188,50 @@ class JSONAnalyser extends React.Component{
         }
     }
     checkMatch(valueToCheck,ref){
-        let className="";
-        if(((valueToCheck+"").toLowerCase())===this.searchedWord.toSearch){
-            className="highlight_search";
+        //Type conversion to string
+        let _operator1=valueToCheck+'';
+        let _operator2=this.searchedWord.toSearch;
+        let _op1='';
+        let _op2='';
+        let _htmlStr='';
+        if(_operator2===''){
+            return '<span>'+' '+_operator1+'</span>';
         }
-        return className;
+        if(!(this.searchedWord['caseMatch'])){
+            _op1=_operator1.toLowerCase();
+            _op2=_operator2.toLowerCase();
+        }
+        else{
+            _op1=_operator1;
+            _op2=_operator2;
+        }
+        if(!(this.searchedWord['wholeWordMatch'])){
+            return this.findMultipleMatch(_op1,_op2,_operator1,'')
+            
+        }
+        else{
+            return this.findMultipleMatch(_op1,_op2,_operator1,'')
+        }
+    }
+    findMultipleMatch(_op1,_op2,_operator1,_html){
+        let temp='';
+        for(let i=0;i<_op1.length;i++){
+            if(_op2.indexOf(_op1[i])===-1){
+                _html+='<span class='+(temp.indexOf(_op2)===-1 || temp===''?'':'highlight_search')+'>'+temp+'</span>'+_operator1[i];
+            }
+            else{
+                temp+=_operator1[i];
+                if(i===_op1.length-1){
+                    _html+='<span class='+(temp.indexOf(_op2)===-1 || temp===''?'':'highlight_search')+'>'+temp+'</span>';
+                }
+            }
+        }
+        console.log('_html',_html)
+        return _html;
+    }
+    handleInputFeature(_type){
+        this.searchedWord[_type]=!this.searchedWord[_type];
+        this.renderComponent();
     }
     analyser(val){
         let randStr=Math.random().toString(36).substring(7);
@@ -184,8 +240,8 @@ class JSONAnalyser extends React.Component{
         if(type==='String' || type==='Number' || type==='Date' || type==='Null' || type==='Boolean'){
             let count=this.count;
             return(
-                <div className={"value_wrapper "+this.checkMatch(val,"value_wrapper_"+count)} ref={"value_wrapper_"+count} style={this.analysedStyle['valueStyle']}>
-                    {' '+val}
+                <div className={"value_wrapper "} ref={"value_wrapper_"+count} style={this.analysedStyle['valueStyle']}>
+                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(val,"value_wrapper_"+count)}} />;
                 </div>
             )
         }
@@ -339,6 +395,18 @@ class JSONAnalyser extends React.Component{
                         <span className="rhs_collapseExpand" onClick={this.handleCollExp.bind(this)}>
                             <img src={this.collapseFlag?"img/expandAll.png":"img/collapseAll.png"} width="20"></img>
                         </span>
+                        <img 
+                            src="img/wholeWordMatch.png"
+                            className={"wholeWordMatch "+(this.searchedWord['wholeWordMatch']?'inputFeatureSelected':'')} 
+                            width="22"
+                            onClick={this.handleInputFeature.bind(this,'wholeWordMatch')}
+                        />
+                        <img 
+                            src="img/caseMatch.png"
+                            className={"caseMatch "+(this.searchedWord['caseMatch']?'inputFeatureSelected':'')} 
+                            width="22"
+                            onClick={this.handleInputFeature.bind(this,'caseMatch')}
+                        />
                         <span className="searchIcon">
                             <input type="text" className="searchInput" placeholder="Search for key/value" ref="searchedWord" value={this.searchedWord.input} onKeyDown={this.handleKeyInput.bind(this)} onChange={this.handleInput.bind(this,'searchedWord')}></input>
                         </span>                        

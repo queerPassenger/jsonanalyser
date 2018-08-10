@@ -99,15 +99,29 @@ button{
     border-radius: 7px;
     border-width: 0px;
     padding-left: 1%;
-    padding-right: 5%;
-    margin-top:-7px;
-    margin-bottom:-10px;
-    margin-right:2%;
+    padding-right: 10%;
+    margin-top: -7px;
+    margin-bottom: -10px;
+    /* margin-right: 2%; */
     font-family: monospace;
     float: right;
+    width: 233px;
 }
 .highlight_search{
     background: #cecaca;
+}
+.wholeWordMatch{
+    float: right;
+    position: relative;
+    right: 8%;
+}
+.caseMatch{
+    float: right;
+    position: relative;
+    right: 9%;
+}
+.inputFeatureSelected{
+    background: #b5b5b5;
 }
 *{
    /*  outline:1px solid black; */
