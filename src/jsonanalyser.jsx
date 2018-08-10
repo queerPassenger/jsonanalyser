@@ -121,19 +121,43 @@ class JSONAnalyser extends React.Component{
         return valHint;
     }
     handleAnalyser(){
-       var innerText = this.refs['lhs'].innerText  // using innerText here because it preserves newlines
+       let innerText = this.refs['lhs'].innerText  // using innerText here because it preserves newlines
         if(innerText[innerText.length-1] === '\n') {
             innerText = innerText.slice(0,-1) ;          
             // get rid of weird extra newline
         }
-        console.log("INNERTEXT",JSON.stringify(innerText));
-        let output=innerText.replace(/(\r\n\t|\n|\r\t|[^\S ]+)/gm,"");
-        let jsonOutput=JSON.parse(output);
+        /* console.log("INNERTEXT",JSON.stringify(innerText));
+        let output=innerText.replace(/(\r\n\t|\n|\r\t|[^\S ]+)/gm,""); */
+        innerText=this.jsonFurnace(innerText);
+        console.log(innerText);
+        let jsonOutput=JSON.parse(innerText);
         this.jsonToAnalyse=jsonOutput;
         this.collapseFlag=true;
         this.collapseSet=[];
           
         this.renderComponent();
+    }
+    jsonFurnace(_in){
+        let _out='';
+        let _single=false;
+        let _double=false;
+        for(let i=0;i<_in.length;i++){
+            let _c=_in[i];
+            let _regex='';
+            if(_c==="'"){
+                _single=!_single;
+            }
+            else if(_c==='"'){
+                _double=!_double;
+            }
+            else{
+                if(!(_single || _double)){
+                    _regex=/\s/g;
+                }
+            }
+            _out+=_c.replace(_regex,'');
+        }
+        return (_out);
     }
     handleInput(objKey){
         this[objKey].input=this.refs[objKey].value;
