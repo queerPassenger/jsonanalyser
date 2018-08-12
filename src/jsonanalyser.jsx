@@ -34,6 +34,7 @@ class JSONAnalyser extends React.Component{
         this.searchedWord={
             input:"",
             toSearch:"",
+            currInd:-1,
             matchedRefs:[],
             caseMatch:false,
             wholeWordMatch:false,
@@ -184,6 +185,7 @@ class JSONAnalyser extends React.Component{
         if(e.keyCode===13){
             this.searchedWord.toSearch=this.searchedWord.input.trim();
             this.handleCollExp(false);
+            if(this.searchedWord.matchedRefs>this.searchedWord)
             this.renderComponent();
         }
     }
@@ -197,38 +199,161 @@ class JSONAnalyser extends React.Component{
         if(_operator2===''){
             return '<span>'+' '+_operator1+'</span>';
         }
-        if(!(this.searchedWord['caseMatch'])){
-            _op1=_operator1.toLowerCase();
-            _op2=_operator2.toLowerCase();
-        }
-        else{
+        if(this.searchedWord['caseMatch']){
             _op1=_operator1;
             _op2=_operator2;
         }
-        if(!(this.searchedWord['wholeWordMatch'])){
-            return this.findMultipleMatch(_op1,_op2,_operator1,'')
-            
-        }
         else{
-            return this.findMultipleMatch(_op1,_op2,_operator1,'')
+            _op1=_operator1.toLowerCase();
+            _op2=_operator2.toLowerCase();           
         }
+        let matchObj=this.findMultipleMatch(_op1,_op2,_operator1,this.searchedWord['wholeWordMatch']);
+        if(matchObj._flag){
+            if(this.searchedWord.matchedRefs.length===0){
+                console.log(this.ref);
+            }
+            this.searchedWord.matchedRefs.push(ref);
+        }
+        return matchObj._html
     }
-    findMultipleMatch(_op1,_op2,_operator1,_html){
+    /* findMultipleMatch(_op1,_op2,_operator1,wholeWordMatch,_html){
         let temp='';
+        let tempToCheck='';
+        let _flag=false;
         for(let i=0;i<_op1.length;i++){
+            let _highlight=false;
             if(_op2.indexOf(_op1[i])===-1){
-                _html+='<span class='+(temp.indexOf(_op2)===-1 || temp===''?'':'highlight_search')+'>'+temp+'</span>'+_operator1[i];
+                if(tempToCheck.indexOf(_op2)!==-1){
+                    if(wholeWordMatch){
+                        if(_op1[i+1]){
+                            if(_op1[i+1]===' '){
+                                if(_op1[i-tempToCheck.length]){
+                                    if(_op1[i-tempToCheck.length]===' '){
+                                        _highlight=true;
+                                    }
+                                }
+                                else{
+                                    _highlight=true;
+                                }
+                            }
+                        }
+                        else{
+                            if(_op1[i-tempToCheck.length]){
+                                if(_op1[i-tempToCheck.length]===' '){
+                                    _highlight=true;
+                                }
+                            }
+                            else{
+                                _highlight=true;
+                            }
+                        }
+            
+                    }
+                    else{
+                        _highlight=true;                                       
+                    }
+                }
+
+                if(_highlight){
+                    _html+='<span class="highlight_search">'+temp+'</span>'+_operator1[i];
+                }
+                else{
+                    _html+='<span class="">'+temp+_operator1[i];'</span>';
+                }
+                temp='';
+                tempToCheck='';
             }
             else{
+                console.log("_op",_op2,_operator1[i]);
                 temp+=_operator1[i];
+                tempToCheck+=_op1[i];
+                console.log("OPER[i] temp",temp)
                 if(i===_op1.length-1){
-                    _html+='<span class='+(temp.indexOf(_op2)===-1 || temp===''?'':'highlight_search')+'>'+temp+'</span>';
+                    if(tempToCheck.indexOf(_op2)!==-1){
+                        if(wholeWordMatch){
+                            if(_op1[i+1]){
+                                if(_op1[i+1]===' '){
+                                    if(_op1[i-tempToCheck.length]){
+                                        if(_op1[i-tempToCheck.length]===' '){
+                                            _highlight=true;
+                                        }
+                                    }
+                                    else{
+                                        _highlight=true;
+                                    }
+                                }
+                            }
+                            else{
+                                if(_op1[i-tempToCheck.length]){
+                                    if(_op1[i-tempToCheck.length]===' '){
+                                        _highlight=true;
+                                    }
+                                }
+                                else{
+                                    _highlight=true;
+                                }
+                            }
+                
+                        }
+                        else{
+                            _highlight=true;                                       
+                        }
+                    }
+                    if(_highlight){
+                        _html+='<span class="highlight_search">'+temp+'</span>';
+                    }
+                    else{
+                        _html+='<span class="">'+temp+'</span>';
+                    }
+                  
                 }
+                
+            }
+            if(_highlight && (!_flag)){
+                _flag=true;
             }
         }
         console.log('_html',_html)
-        return _html;
+        return {
+            _html,
+            _flag
+        }
+    } */
+   
+    findMultipleMatch(_op1,_op2,_operator1,wholeWordMatch){
+        let _html='';
+        let _flag=false;
+
+        let tempToCheck='';
+        let _strWithoutMatchWord=_op1.split(_op2).join('');
+        if(_strWithoutMatchWord.length===0){
+            _flag=true;
+            _html='<span class="highlight_search">'+_operator1+'</span>';
+        }
+        for(let i=0;i<_strWithoutMatchWord.length;i++){
+            if(_strWithoutMatchWord[i]===_op1[i]){
+                tempToCheck+=_operator1[i];
+                if(i===(_strWithoutMatchWord.length-1)){
+                    _html+='<span class="">'+tempToCheck+'</span>';
+                }
+            }
+            else{
+                let matchedWord=_operator1.substring(i,i+_op2.length);
+                _html='<span class="">'+tempToCheck+'</span><span class="highlight_search">'+matchedWord+'</span>';
+                _flag=true;
+                tempToCheck='';
+                _strWithoutMatchWord=_strWithoutMatchWord.substring(0,i)+matchedWord+_strWithoutMatchWord.substring(i,_strWithoutMatchWord.length);       
+                console.log("NEW Word",_strWithoutMatchWord);         
+                i=i+matchedWord.length-1;
+            }
+
+        }
+        return {
+            _html,
+            _flag
+        }
     }
+
     handleInputFeature(_type){
         this.searchedWord[_type]=!this.searchedWord[_type];
         this.renderComponent();
@@ -356,6 +481,7 @@ class JSONAnalyser extends React.Component{
     }
     render(){
         this.count=-1;
+        this.searchedWord.matchedRefs=[];
 
         let type=Object.prototype.toString.call(this.jsonToAnalyse).split(' ')[1].replace(']','');
         let flag=(type==='String' || type==='Number' || type==='Date' || type==='Null' || type==='Boolean')?true:false;
