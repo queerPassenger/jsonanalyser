@@ -427,12 +427,7 @@ class JSONAnalyser extends React.Component{
             this.collapseSet[count]=false;
         }
         console.log("render",this);
-        {/* <img 
-                            src="img/wholeWordMatch.png"
-                            className={"wholeWordMatch "+(this.searchedWord['wholeWordMatch']?'inputFeatureSelected':'')} 
-                            width="22"
-                            onClick={this.handleInputFeature.bind(this,'wholeWordMatch')}
-        /> */}
+       
         return(
             <div className="jsonanalyser_container" style={this.style['container']}>
                 <div className="lhs_container" style={this.style['innerContainer']}>
@@ -459,7 +454,12 @@ class JSONAnalyser extends React.Component{
                         <span className="rhs_collapseExpand" onClick={this.handleCollExp.bind(this)}>
                             <img src={this.collapseFlag?"img/expandAll.png":"img/collapseAll.png"} width="20"></img>
                         </span>
-                        
+                         {/* <img 
+                            src="img/wholeWordMatch.png"
+                            className={"wholeWordMatch "+(this.searchedWord['wholeWordMatch']?'inputFeatureSelected':'')} 
+                            width="22"
+                            onClick={this.handleInputFeature.bind(this,'wholeWordMatch')}
+                        /> */}
                         <img 
                             src="img/caseMatch.png"
                             className={"caseMatch "+(this.searchedWord['caseMatch']?'inputFeatureSelected':'')} 
