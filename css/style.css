@@ -6,9 +6,9 @@ body{
     float:left;
 }
 .header_container,.footer_container{
-    padding-top: 21px;
-    padding-bottom: 21px;
-    background: #797979;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: #9e9e9e;
     border-radius: 4px;
     box-shadow: 1px 2px 8px #a5a5a5;
 }
@@ -20,7 +20,7 @@ body{
 }
 .logo_text{
     font-family:monospace;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     color: white;
     text-align: center;
@@ -36,15 +36,15 @@ body{
     box-shadow: 1px 16px 22px #a5a5a5;
     float: left;
     font-family: 'Source Code Pro';
-    font-size: 18px;
+    font-size: 16px;
     background:white;
 }
 .lhs_header,.rhs_header{
     background: #9e9e9e;
     float: left;
     width: 100%;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 .lhs_header_title,.rhs_header_title{
     margin-left: 3%;
