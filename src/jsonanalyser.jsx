@@ -289,7 +289,7 @@ class JSONAnalyser extends React.Component{
             let count=this.count;
             return(
                 <div className={"value_wrapper "} ref={"value_wrapper_"+count} style={this.analysedStyle['valueStyle']}>
-                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(val,"value_wrapper_"+count)}} />;
+                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(val,"value_wrapper_"+count)}} />
                 </div>
             )
         }
