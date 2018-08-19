@@ -39,12 +39,19 @@ body{
     font-size: 16px;
     background:white;
 }
-.lhs_header,.rhs_header{
+.lhs_header{
     background: #9e9e9e;
     float: left;
     width: 100%;
     padding-top: 10px;
     padding-bottom: 10px;
+}
+.rhs_header{
+    background: #9e9e9e;
+    float: left;
+    width: 100%;
+    padding-top: 9px;
+    padding-bottom: 9px;
 }
 .lhs_header_title,.rhs_header_title{
     margin-left: 3%;
@@ -64,6 +71,8 @@ body{
 .rhs_collapseExpand{
     float: right;
     margin-right: 4%;
+    position: relative;
+    top: 2px;
 }
 .cs_container{
     width: 10%;
@@ -94,18 +103,19 @@ button{
     cursor:pointer;
 }
 .searchInput{
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border-radius: 7px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    border-radius: 5px;
     border-width: 0px;
     padding-left: 1%;
     padding-right: 6%;
-    margin-top: -7px;
+    margin-top: -3px;
     margin-bottom: -10px;
     /* margin-right: 2%; */
     font-family: monospace;
     float: right;
-    width: 233px;
+    width: 192px;
+    font-size: 11px;
 }
 .highlight_search{
     background: #cecaca;

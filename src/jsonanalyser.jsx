@@ -22,15 +22,15 @@ class JSONAnalyser extends React.Component{
                background:'#e8e8e8',     
             },
             innerContainer:{
-                height:this.getHeight(window.innerHeight-(this.height.header+this.height.footer)-20-45+10+10),
+                height:this.getHeight(window.innerHeight-(this.height.header+this.height.footer)-20),
                 marginTop:10,
                 marginBottom:10
             },
             editor:{
-                height:this.getHeight(window.innerHeight-(this.height.header+this.height.footer)-20-45-50-10),
+                height:this.getHeight(window.innerHeight-(this.height.header+this.height.footer)-20-10-50),
             },
             right_arrow_container:{
-                top:this.getHeight(((window.innerHeight-(this.height.header+this.height.footer)-45)/2)-50),               
+                top:this.getHeight(((window.innerHeight-(this.height.header+this.height.footer))/2)-50),               
             },
             plusIcon:{
                 width:'20',
@@ -452,7 +452,7 @@ class JSONAnalyser extends React.Component{
                             Output
                         </span>
                         <span className="rhs_collapseExpand" onClick={this.handleCollExp.bind(this)}>
-                            <img src={this.collapseFlag?"img/expandAll.png":"img/collapseAll.png"} width="20"></img>
+                            <img src={this.collapseFlag?"img/expandAll.png":"img/collapseAll.png"} alt="image" width="15"></img>
                         </span>
                          {/* <img 
                             src="img/wholeWordMatch.png"
@@ -463,7 +463,7 @@ class JSONAnalyser extends React.Component{
                         <img 
                             src="img/caseMatch.png"
                             className={"caseMatch "+(this.searchedWord['caseMatch']?'inputFeatureSelected':'')} 
-                            width="22"
+                            width="20"
                             onClick={this.handleInputFeature.bind(this,'caseMatch')}
                         />
                         <span className="searchIcon">
