@@ -14,8 +14,7 @@ class JSONAnalyser extends React.Component{
         this.collapseFlag=true;
         this.height={
             header:43,
-            footer:37,
-            
+            footer:37,            
         }
         this.style={
             container:{
@@ -32,6 +31,18 @@ class JSONAnalyser extends React.Component{
             },
             right_arrow_container:{
                 top:this.getHeight(((window.innerHeight-(this.height.header+this.height.footer)-45)/2)-50),               
+            },
+            plusIcon:{
+                width:'20',
+                position:'relative',
+                left:'15%',
+                top:'1'
+            },
+            minusIcon:{
+                width:'15',
+                position:'relative',
+                left:'23%',
+                top:'2'
             }
         }
         this.analysedStyle={};
@@ -71,7 +82,7 @@ class JSONAnalyser extends React.Component{
         this.analysedStyle['keyIndStyle']={
             float:'left',
             marginRight:'10px',
-            fontSize:'18px',
+            fontSize:'16px',
             fontFamily:'Source Code Pro',
             fontWeight:'bold'
         };
@@ -81,7 +92,7 @@ class JSONAnalyser extends React.Component{
             marginLeft:'4%'
         };
         this.analysedStyle['valueStyle']={
-            fontSize:'18px',
+            fontSize:'16px',
             fontFamily:'Source Code Pro',
             fontWeight:'bold',
             display:'inline-block'
@@ -95,13 +106,13 @@ class JSONAnalyser extends React.Component{
             display:'none'
         };
         this.analysedStyle['valHint']={
-            fontSize:'15px',
+            fontSize:'12px',
             fontFamily:'Source Code Pro',
             color:'gray',
             width:'100px',
             display:'inline-block',
-            paddingTop:'5px',
-            paddingBottom:'5px',
+            paddingTop:'4px',
+            paddingBottom:'4px',
             paddingLeft:'10px'
         }
         this.renderComponent();
@@ -202,30 +213,28 @@ class JSONAnalyser extends React.Component{
             _flag=true;
             _html='<span class="highlight_search">'+_operator1+'</span>';
         }
-        let i=0;
-        for(i=0;i<_strWithoutMatchWord.length;i++){
-            if(_strWithoutMatchWord[i]===_op1[i]){
-                tempToCheck+=_operator1[i];
-                if(i===(_strWithoutMatchWord.length-1)){
-                    _html+='<span class="">'+tempToCheck+'</span>';
+        else{
+            let i=0;
+            for(i=0;i<_strWithoutMatchWord.length;i++){
+                if(_strWithoutMatchWord[i]===_op1[i]){
+                    tempToCheck+=_operator1[i];
+                    if(i===(_strWithoutMatchWord.length-1)){
+                        _html+='<span class="">'+tempToCheck+'</span>';
+                    }
+                }
+                else{
+                    let matchedWord=_operator1.substring(i,i+_op2.length);
+                    _html+='<span class="">'+tempToCheck+'</span><span class="highlight_search">'+matchedWord+'</span>';
+                    _flag=true;
+                    tempToCheck='';
+                    _strWithoutMatchWord=_strWithoutMatchWord.substring(0,i)+matchedWord+_strWithoutMatchWord.substring(i,_strWithoutMatchWord.length);
+                    i=i+matchedWord.length-1;
                 }
             }
-            else{
-                let matchedWord=_operator1.substring(i,i+_op2.length);
-                _html+='<span class="">'+tempToCheck+'</span><span class="highlight_search">'+matchedWord+'</span>';
+            if(_strWithoutMatchWord.length!==_op1.length){
                 _flag=true;
-                tempToCheck='';
-                _strWithoutMatchWord=_strWithoutMatchWord.substring(0,i)+matchedWord+_strWithoutMatchWord.substring(i,_strWithoutMatchWord.length);
-                i=i+matchedWord.length-1;
+                _html+='<span class="highlight_search">'+_operator1.substring(i,i+_op2.length)+'</span>';
             }
-        }
-        console.log("_strWithoutMatchWord",_strWithoutMatchWord);
-        console.log("_op1",_op1);
-        console.log("_operator1.substring(i,i+_op2.length)",i,_operator1.substring(i,i+_op2.length));
-        console.log('before O/p',_html);
-        if(_strWithoutMatchWord.length!==_op1.length){
-            _flag=true;
-            _html+='<span class="highlight_search">'+_operator1.substring(i,i+_op2.length)+'</span>';
         }
         console.log('O/p',_html);
         return{
@@ -303,9 +312,9 @@ class JSONAnalyser extends React.Component{
                                 <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} onClick={this.handleCollapse.bind(this,count)} >
                                     {!flag?
                                         this.collapseSet[count]?
-                                            <img src="img/expandIcon.png" width='31'></img>
+                                            <img src="img/expandIcon.png" style={this.style['plusIcon']}></img>
                                         :
-                                            <img src="img/collapseIcon.png" width='23'></img>
+                                            <img src="img/collapseIcon.png" style={this.style['minusIcon']}></img>
                                     :
                                         null
                                     }
@@ -357,9 +366,9 @@ class JSONAnalyser extends React.Component{
                                 <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} onClick={this.handleCollapse.bind(this,count)} >
                                     {!flag?
                                         this.collapseSet[count]?
-                                            <img src="img/expandIcon.png" width='31'></img>
+                                            <img src="img/expandIcon.png" style={this.style['plusIcon']}></img>
                                         :
-                                            <img src="img/collapseIcon.png" width='23'></img>
+                                            <img src="img/collapseIcon.png" style={this.style['minusIcon']}></img>
                                     :
                                         null
                                     }
@@ -444,12 +453,12 @@ class JSONAnalyser extends React.Component{
                         <span className="rhs_collapseExpand" onClick={this.handleCollExp.bind(this)}>
                             <img src={this.collapseFlag?"img/expandAll.png":"img/collapseAll.png"} width="20"></img>
                         </span>
-                        <img 
+                        {/* <img 
                             src="img/wholeWordMatch.png"
                             className={"wholeWordMatch "+(this.searchedWord['wholeWordMatch']?'inputFeatureSelected':'')} 
                             width="22"
                             onClick={this.handleInputFeature.bind(this,'wholeWordMatch')}
-                        />
+                        /> */}
                         <img 
                             src="img/caseMatch.png"
                             className={"caseMatch "+(this.searchedWord['caseMatch']?'inputFeatureSelected':'')} 
@@ -464,9 +473,9 @@ class JSONAnalyser extends React.Component{
                         <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} >
                             {!flag?
                                 this.collapseSet[count]?
-                                    <img src="img/expandIcon.png" width='31' onClick={this.handleCollapse.bind(this,count)} ></img>
+                                    <img src="img/expandIcon.png" style={this.style['plusIcon']} onClick={this.handleCollapse.bind(this,count)} ></img>
                                 :
-                                    <img src="img/collapseIcon.png" width='23'onClick={this.handleCollapse.bind(this,count)} ></img>
+                                    <img src="img/collapseIcon.png" style={this.style['minusIcon']}onClick={this.handleCollapse.bind(this,count)} ></img>
                             :
                                 null
                             }
