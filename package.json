@@ -1,7 +1,7 @@
 {
   "name": "jsonanalyser",
   "description": "Analyses JSON V4 without WholeWord",
-  "version": "4.0.2",
+  "version": "4.0.4",
   "main": "server.js",
   "dependencies": {
     "body-parser": "^1.18.2",

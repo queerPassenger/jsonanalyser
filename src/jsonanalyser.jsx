@@ -56,7 +56,7 @@ class JSONAnalyser extends React.Component{
         }
     }
     componentDidMount(){
-        this.refs['lhs'].innerText=JSON.stringify({
+        let defaultInput=JSON.stringify({
             "array": [
               1,
               2,
@@ -71,7 +71,8 @@ class JSONAnalyser extends React.Component{
               "e": "f"
             },
             "string": "Hello World"
-          })
+        });
+        this.refs['lhs'].innerText=localStorage.getItem('input')?localStorage.getItem('input'):defaultInput;
         this.computeAnalysedStyle();
     }
     computeAnalysedStyle(){
@@ -164,6 +165,7 @@ class JSONAnalyser extends React.Component{
         innerText=this.jsonFurnace(innerText);
         console.log(innerText);
         let jsonOutput=JSON.parse(innerText);
+        localStorage.setItem("input",innerText);
         this.jsonToAnalyse=jsonOutput;
         this.collapseFlag=true;
         this.collapseSet=[];
