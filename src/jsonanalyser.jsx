@@ -12,6 +12,7 @@ class JSONAnalyser extends React.Component{
         this.count=-1;
         this.collapseSet=[];
         this.collapseFlag=true;
+        this.fullScreen=false;
         this.height={
             header:43,
             footer:37,            
@@ -49,10 +50,22 @@ class JSONAnalyser extends React.Component{
         this.searchedWord={
             input:"",
             toSearch:"",
-            currInd:-1,
+            currInd:1,
             matchedRefs:[],
             caseMatch:false,
             wholeWordMatch:false,
+        },
+        this.highLightCount=1;
+        this.fullScreenStyle={
+            lhs:{
+                'display':'none'
+            },
+            cs:{
+                'display':'none'
+            },
+            rhs:{
+                width:'95%'
+            }
         }
     }
     componentDidMount(){
@@ -127,6 +140,14 @@ class JSONAnalyser extends React.Component{
         else{
             return height;
         }
+    }
+    handleFullScreen(){
+        this.fullScreen=!this.fullScreen;
+        this.renderComponent();
+    }
+    objectCombiner(_obj1,_obj2){
+        let obj1=JSON.parse(JSON.stringify(_obj1));
+        return Object.assign(obj1,_obj2);
     }
     handleCollExp(flag){
         if(flag){
@@ -204,18 +225,37 @@ class JSONAnalyser extends React.Component{
         if(e.keyCode===13){
             this.searchedWord.toSearch=this.searchedWord.input.trim();
             this.handleCollExp(false);
-            if(this.searchedWord.matchedRefs>this.searchedWord)
+            if(this.searchedWord.matchedRefs.length!==0){
+                if(this.searchedWord.matchedRefs.length>this.searchedWord.currInd){
+                    this.searchedWord.currInd+=1;     
+                }
+                else{
+                    this.searchedWord.currInd=1;                             
+                }
+            }
             this.renderComponent();
+        }
+        else{
+            this.searchedWord.matchedRefs=[];
+            this.searchedWord.toSearch='';
+            this.searchedWord.currInd=1;
         }
     }
     findMultipleMatch(_op1,_op2,_operator1,wholeWordMatch){
+       
         let _html='';
         let _flag=false;
         let tempToCheck='';
+        
         let _strWithoutMatchWord=_op1.split(_op2).join('');
         if(_strWithoutMatchWord.length===0){
+            this.highLightCount+=1;
+            let refName='highLightCount'+this.highLightCount;            
             _flag=true;
-            _html='<span class="highlight_search">'+_operator1+'</span>';
+            _html='<span class="highlight_search" id='+refName+'>'+_operator1+'</span>';            
+            if(this.searchedWord.matchedRefs.indexOf(refName)===-1){
+                this.searchedWord.matchedRefs.push(refName);
+            }
         }
         else{
             let i=0;
@@ -227,26 +267,35 @@ class JSONAnalyser extends React.Component{
                     }
                 }
                 else{
+                    this.highLightCount+=1;
+                    let refName='highLightCount'+this.highLightCount;
+                    _flag=true;  
                     let matchedWord=_operator1.substring(i,i+_op2.length);
-                    _html+='<span class="">'+tempToCheck+'</span><span class="highlight_search">'+matchedWord+'</span>';
-                    _flag=true;
+                    _html+='<span class="">'+tempToCheck+'</span><span class="highlight_search" id='+refName+'>'+matchedWord+'</span>';
+                    if(this.searchedWord.matchedRefs.indexOf(refName)===-1){
+                        this.searchedWord.matchedRefs.push(refName);
+                    }
                     tempToCheck='';
                     _strWithoutMatchWord=_strWithoutMatchWord.substring(0,i)+matchedWord+_strWithoutMatchWord.substring(i,_strWithoutMatchWord.length);
                     i=i+matchedWord.length-1;
                 }
             }
             if(_strWithoutMatchWord.length!==_op1.length){
+                 this.highLightCount+=1;
+                 let refName='highLightCount'+this.highLightCount;
                 _flag=true;
-                _html+='<span class="highlight_search">'+_operator1.substring(i,i+_op2.length)+'</span>';
+                _html+='<span class="highlight_search" id='+refName+'>'+_operator1.substring(i,i+_op2.length)+'</span>';
+                if(this.searchedWord.matchedRefs.indexOf(refName)===-1){
+                    this.searchedWord.matchedRefs.push(refName);
+                }
             }
         }
-        console.log('O/p',_html);
         return{
             _html,
             _flag
         }
     }
-    checkMatch(valueToCheck,ref){
+    checkMatch(valueToCheck){
         let _operator1=valueToCheck+'';
         let _operator2=this.searchedWord.toSearch;
         let _op1='';
@@ -268,20 +317,22 @@ class JSONAnalyser extends React.Component{
                 return '<span>'+' '+_operator1+'</span>';
             }
         }
-        console.log("WholeWordMatch not",valueToCheck);
         let matchObj=this.findMultipleMatch(_op1,_op2,_operator1,this.searchedWord['wholeWordMatch']);
-        if(matchObj._flag){
-            if(this.searchedWord.matchedRefs.length===0){
-
-            }
-            this.searchedWord.matchedRefs.push(ref);
-        }
         return matchObj._html;
     }
 
     handleInputFeature(_type){
         this.searchedWord[_type]=!this.searchedWord[_type];
         this.renderComponent();
+    }
+    componentDidUpdate(prevProps, prevState) {
+        this.refs['searchWordResult'].innerHTML=this.searchedWord.toSearch===''?'':+this.searchedWord.matchedRefs.length===0?'No Results':this.searchedWord.currInd+'/'+this.searchedWord.matchedRefs.length;
+        if(this.searchedWord.matchedRefs.length!==0){
+            if(this.searchedWord.matchedRefs[this.searchedWord.currInd-1]){
+                document.getElementById(this.searchedWord.matchedRefs[this.searchedWord.currInd-1]).scrollIntoView();
+                document.getElementById(this.searchedWord.matchedRefs[this.searchedWord.currInd-1]).classList.add("currentIndMatch");
+            }
+        }
     }
     analyser(val){
         let randStr=Math.random().toString(36).substring(7);
@@ -291,7 +342,7 @@ class JSONAnalyser extends React.Component{
             let count=this.count;
             return(
                 <div className={"value_wrapper "} ref={"value_wrapper_"+count} style={this.analysedStyle['valueStyle']}>
-                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(val,"value_wrapper_"+count)}} />
+                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(val)}} />
                 </div>
             )
         }
@@ -324,7 +375,7 @@ class JSONAnalyser extends React.Component{
                                     }
                                 </div>
                                 <div className="object-key"  ref={"object-key"+count} style={flag?this.analysedStyle['keyIndStyle']:this.analysedStyle['keyIndFloatStyle']} >
-                                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(key,"value_wrapper_"+count)}} />
+                                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(key)}} />
                                     {flag?
                                         <span>:</span>
                                     :
@@ -378,7 +429,7 @@ class JSONAnalyser extends React.Component{
                                     }
                                 </div>
                                 <div className="array-ind" ref={"array-ind"+count} style={flag?this.analysedStyle['keyIndStyle']:this.analysedStyle['keyIndFloatStyle']} >
-                                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(ind,"value_wrapper_"+count)}} />
+                                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(ind)}} />
                                     {flag?
                                         <span>:</span>
                                     :
@@ -409,6 +460,7 @@ class JSONAnalyser extends React.Component{
                 </div>
             )
         }
+       
     }
     renderComponent(){
         this.setState({
@@ -418,7 +470,7 @@ class JSONAnalyser extends React.Component{
     render(){
         this.count=-1;
         this.searchedWord.matchedRefs=[];
-
+        this.highLightCount=-1;
         let type=Object.prototype.toString.call(this.jsonToAnalyse).split(' ')[1].replace(']','');
         let flag=(type==='String' || type==='Number' || type==='Date' || type==='Null' || type==='Boolean')?true:false;
         this.count++;
@@ -434,7 +486,7 @@ class JSONAnalyser extends React.Component{
        
         return(
             <div className="jsonanalyser_container" style={this.style['container']}>
-                <div className="lhs_container" style={this.style['innerContainer']}>
+                <div className="lhs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.fullScreenStyle['lhs']):this.style['innerContainer']}>
                     <div className="lhs_header">
                         <span className="lhs_header_title">
                             Input
@@ -444,18 +496,21 @@ class JSONAnalyser extends React.Component{
                     <div className="lhs_editor" ref="lhs" contentEditable={"true"} style={this.style['editor']}>
                     </div>
                 </div>
-                <div className="cs_container" style={this.style['innerContainer']}>
+                <div className="cs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.fullScreenStyle['cs']):this.style['innerContainer']}>
                     <div className="right_arrow_container" style={this.style['right_arrow_container']}>
                        {/*  <img src="img/rightArrow.png" className="rightArrow_img"></img> */}
                        <button  onClick={this.handleAnalyser.bind(this)}>Analyse</button>
                     </div>
                 </div>
-                <div className="rhs_container" style={this.style['innerContainer']}>
+                <div className="rhs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.fullScreenStyle['rhs']):this.style['innerContainer']}>
                     <div className="rhs_header">
                         <span className="rhs_header_title">
                             Output
                         </span>
-                        <span className="rhs_collapseExpand" onClick={this.handleCollExp.bind(this)}>
+                        <span className="rhs_fullScreen" title={this.fullScreen?"Normal Screen mode":"Full Screen mode"} onClick={this.handleFullScreen.bind(this)}>
+                            <img src="img/fullScreen.png" alt="image" width="20"></img>
+                        </span>
+                        <span className="rhs_collapseExpand" title={this.collapseFlag?"Expand all":"Collapse all"} onClick={this.handleCollExp.bind(this)}>
                             <img src={this.collapseFlag?"img/expandAll.png":"img/collapseAll.png"} alt="image" width="15"></img>
                         </span>
                          {/* <img 
@@ -472,7 +527,10 @@ class JSONAnalyser extends React.Component{
                         />
                         <span className="searchIcon">
                             <input type="text" className="searchInput" placeholder="Search for key/value" ref="searchedWord" value={this.searchedWord.input} onKeyDown={this.handleKeyInput.bind(this)} onChange={this.handleInput.bind(this,'searchedWord')}></input>
-                        </span>                        
+                        </span>    
+                        <span className="searchWordResult" ref="searchWordResult" id="searchWordResult">
+                            
+                        </span>                    
                     </div>
                     <div className="rhs_editor" style={this.style['editor']}>
                         <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} >

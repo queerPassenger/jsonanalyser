@@ -70,9 +70,16 @@ body{
 }
 .rhs_collapseExpand{
     float: right;
-    margin-right: 4%;
+    margin-right: 2%;
     position: relative;
     top: 2px;
+    cursor: pointer;
+}
+.rhs_fullScreen{
+    float: right;
+    margin-right: 3%;
+    position: relative;
+    bottom: 1px;
     cursor: pointer;
 }
 .cs_container{
@@ -117,7 +124,7 @@ button{
     /* margin-right: 2%; */
     font-family: monospace;
     float: right;
-    width: 192px;
+    width: 30%;
     font-size: 11px;
 }
 .highlight_search{
@@ -131,11 +138,25 @@ button{
 .caseMatch{
     float: right;
     position: relative;
-    right: 5%;
+    right: 4%;
     cursor:pointer;
 }
 .inputFeatureSelected{
     background: #b5b5b5;
+}
+.searchWordResult{
+    float: right;
+    font-size: 11px;
+    font-family: cursive;
+    font-weight: bold;
+    color: white;
+    margin-right: 1%;
+    position: relative;
+    top: 2px;
+}
+
+.currentIndMatch {
+    font-style: italic;
 }
 *{
    /*  outline:1px solid black; */
