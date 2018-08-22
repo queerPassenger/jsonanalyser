@@ -18,7 +18,7 @@ class JSONAnalyser extends React.Component{
         }
         this.style={
             container:{
-               height:this.getHeight(window.innerHeight-(this.height.header+this.height.footer)-5+10),         
+               height:this.getHeight(window.innerHeight-(this.height.header+this.height.footer)),         
                background:'#e8e8e8',     
             },
             innerContainer:{
@@ -84,7 +84,7 @@ class JSONAnalyser extends React.Component{
             float:'left',
             marginRight:'10px',
             fontSize:'16px',
-            fontFamily:'Source Code Pro',
+            fontFamily:'Source Code Pro',            
             fontWeight:'bold'
         };
         this.analysedStyle['keyIndFloatStyle']=JSON.parse(JSON.stringify(this.analysedStyle['keyIndStyle']));
@@ -95,13 +95,15 @@ class JSONAnalyser extends React.Component{
         this.analysedStyle['valueStyle']={
             fontSize:'16px',
             fontFamily:'Source Code Pro',
-            fontWeight:'bold',
+            width:'80%',
+            /* fontWeight:'bold', */
             display:'inline-block'
         };
         this.analysedStyle['collapsable-icon']={
             width:'30px',
             float:'left',
-            height:'20px'
+            height:'20px',
+            cursor:'pointer',
         };
         this.analysedStyle['hide']={
             display:'none'
