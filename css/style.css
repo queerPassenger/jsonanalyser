@@ -158,6 +158,18 @@ button{
 .currentIndMatch {
     font-style: italic;
 }
+.jsHelper,.errorHelper{
+    width: 98%;
+    float: left;
+    font-size: 13px;
+    overflow: auto;
+    box-shadow: 3px 3px 1px #b5b5b5;
+    background: #d8d8d8;
+    font-family: monospace;
+    padding-left: 1%;
+    padding-right: 1%;
+    text-align: center;
+}
 *{
    /*  outline:1px solid black; */
 }

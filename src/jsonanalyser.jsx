@@ -1,52 +1,12 @@
 import React from 'react';
-
+import styleGen from './styleHelper.js';
 class JSONAnalyser extends React.Component{
     constructor(props){
         super(props);
         this.state={
             renderComponent:false,
         }
-        this.jsonToAnalyse={},
-        this.analysedJSON={},
-
-        this.count=-1;
-        this.collapseSet=[];
-        this.collapseFlag=true;
-        this.fullScreen=false;
-        this.height={
-            header:43,
-            footer:37,            
-        }
-        this.style={
-            container:{
-               height:this.getHeight(window.innerHeight-(this.height.header+this.height.footer)),         
-               background:'#e8e8e8',     
-            },
-            innerContainer:{
-                height:this.getHeight(window.innerHeight-(this.height.header+this.height.footer)-20),
-                marginTop:10,
-                marginBottom:10
-            },
-            editor:{
-                height:this.getHeight(window.innerHeight-(this.height.header+this.height.footer)-20-10-50),
-            },
-            right_arrow_container:{
-                top:this.getHeight(((window.innerHeight-(this.height.header+this.height.footer))/2)-50),               
-            },
-            plusIcon:{
-                width:'20',
-                position:'relative',
-                left:'15%',
-                top:'1'
-            },
-            minusIcon:{
-                width:'15',
-                position:'relative',
-                left:'23%',
-                top:'2'
-            }
-        }
-        this.analysedStyle={};
+        this.jsonToAnalyse={},     
         this.searchedWord={
             input:"",
             toSearch:"",
@@ -54,93 +14,36 @@ class JSONAnalyser extends React.Component{
             matchedRefs:[],
             caseMatch:false,
             wholeWordMatch:false,
-        },
+        },      
+
+        this.count=-1;
         this.highLightCount=1;
-        this.fullScreenStyle={
-            lhs:{
-                'display':'none'
-            },
-            cs:{
-                'display':'none'
-            },
-            rhs:{
-                width:'95%'
-            }
-        }
+
+        this.collapseSet=[];
+        this.collapseFlag=true;
+
+        this.fullScreen=false;
+        
+        this.errorHelper='';
+        this.jsHelperTip='';
+
+        this.style={};    
+        
     }
     componentDidMount(){
-        let defaultInput=JSON.stringify({
-            "array": [
-              1,
-              2,
-              3
-            ],
-            "boolean": true,
-            "null": null,
-            "number": 123,
-            "object": {
-              "a": "b",
-              "c": "d",
-              "e": "f"
-            },
-            "string": "Hello World"
-        });
+        let json={"array":[1,2,3],"boolean":true,"null":null,"number":123,"object":{"a":"b","c":"d","e":"f"},"string":"Hello World"};
+        let defaultInput=JSON.stringify(json, null, "\t");
         this.refs['lhs'].innerText=localStorage.getItem('input')?localStorage.getItem('input'):defaultInput;
-        this.computeAnalysedStyle();
     }
-    computeAnalysedStyle(){
-        this.analysedStyle['object_parent_wrapper']={
-            paddingLeft:'2%',
-        };
-        this.analysedStyle['array_parent_wrapper']=this.analysedStyle['object_parent_wrapper'];
-        this.analysedStyle['keyIndStyle']={
-            float:'left',
-            marginRight:'10px',
-            fontSize:'16px',
-            fontFamily:'Source Code Pro',            
-            fontWeight:'bold'
-        };
-        this.analysedStyle['keyIndFloatStyle']=JSON.parse(JSON.stringify(this.analysedStyle['keyIndStyle']));
-        this.analysedStyle['keyIndFloatStyle']['float']='left';
-        this.analysedStyle['valStyle']={
-            marginLeft:'4%'
-        };
-        this.analysedStyle['valueStyle']={
-            fontSize:'16px',
-            fontFamily:'Source Code Pro',
-            width:'80%',
-            /* fontWeight:'bold', */
-            display:'inline-block'
-        };
-        this.analysedStyle['collapsable-icon']={
-            width:'30px',
-            float:'left',
-            height:'20px',
-            cursor:'pointer',
-        };
-        this.analysedStyle['hide']={
-            display:'none'
-        };
-        this.analysedStyle['valHint']={
-            fontSize:'12px',
-            fontFamily:'Source Code Pro',
-            color:'gray',
-            width:'100px',
-            display:'inline-block',
-            paddingTop:'4px',
-            paddingBottom:'4px',
-            paddingLeft:'10px'
+    componentDidUpdate(prevProps, prevState){
+        this.refs['searchWordResult'].innerHTML=this.searchedWord.toSearch===''?'':+this.searchedWord.matchedRefs.length===0?'No Results':this.searchedWord.currInd+'/'+this.searchedWord.matchedRefs.length;
+        if(this.searchedWord.matchedRefs.length!==0){
+            if(this.searchedWord.matchedRefs[this.searchedWord.currInd-1]){
+                document.getElementById(this.searchedWord.matchedRefs[this.searchedWord.currInd-1]).scrollIntoView();
+                document.getElementById(this.searchedWord.matchedRefs[this.searchedWord.currInd-1]).classList.add("currentIndMatch");
+            }
         }
-        this.renderComponent();
-    }
-    getHeight(height){
-        if(height<=0){
-            return 0
-        }
-        else{
-            return height;
-        }
-    }
+    }   
     handleFullScreen(){
         this.fullScreen=!this.fullScreen;
         this.renderComponent();
@@ -186,13 +89,23 @@ class JSONAnalyser extends React.Component{
         }
        // let output=innerText.replace(/(\r\n\t|\n|\r\t|[^\S ]+)/gm,""); 
         innerText=this.jsonFurnace(innerText);
-        console.log(innerText);
-        let jsonOutput=JSON.parse(innerText);
-        localStorage.setItem("input",innerText);
-        this.jsonToAnalyse=jsonOutput;
+        this.errorHelper='';
         this.collapseFlag=true;
         this.collapseSet=[];
-          
+        this.jsHelperTip='' ;
+        let jsonOutput={};
+        this.jsonToAnalyse=jsonOutput;
+        try{
+            jsonOutput=JSON.parse(innerText);
+        }
+        catch(err){
+            console.log('err',err);
+            this.errorHelper=err.toString();
+            this.renderComponent();
+            return;
+        }
+        this.jsonToAnalyse=jsonOutput;               
+        localStorage.setItem("input",innerText);
         this.renderComponent();
     }
     jsonFurnace(_in){
@@ -241,8 +154,7 @@ class JSONAnalyser extends React.Component{
             this.searchedWord.currInd=1;
         }
     }
-    findMultipleMatch(_op1,_op2,_operator1,wholeWordMatch){
-       
+    findMultipleMatch(_op1,_op2,_operator1,wholeWordMatch){       
         let _html='';
         let _flag=false;
         let tempToCheck='';
@@ -325,24 +237,20 @@ class JSONAnalyser extends React.Component{
         this.searchedWord[_type]=!this.searchedWord[_type];
         this.renderComponent();
     }
-    componentDidUpdate(prevProps, prevState) {
-        this.refs['searchWordResult'].innerHTML=this.searchedWord.toSearch===''?'':+this.searchedWord.matchedRefs.length===0?'No Results':this.searchedWord.currInd+'/'+this.searchedWord.matchedRefs.length;
-        if(this.searchedWord.matchedRefs.length!==0){
-            if(this.searchedWord.matchedRefs[this.searchedWord.currInd-1]){
-                document.getElementById(this.searchedWord.matchedRefs[this.searchedWord.currInd-1]).scrollIntoView();
-                document.getElementById(this.searchedWord.matchedRefs[this.searchedWord.currInd-1]).classList.add("currentIndMatch");
-            }
-        }
+    
+    handleJSHelper(jsHelper){
+        this.jsHelperTip=jsHelper;
+        this.renderComponent();
     }
-    analyser(val){
+    analyser(val,_jsHelper){
         let randStr=Math.random().toString(36).substring(7);
         let type=Object.prototype.toString.call(val).split(' ')[1].replace(']','');
         
         if(type==='String' || type==='Number' || type==='Date' || type==='Null' || type==='Boolean'){
             let count=this.count;
             return(
-                <div className={"value_wrapper "} ref={"value_wrapper_"+count} style={this.analysedStyle['valueStyle']}>
-                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(val)}} />
+                <div className={"value_wrapper "} ref={"value_wrapper_"+count} style={this.style['valueStyle']}>
+                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(val)}} onClick={this.handleJSHelper.bind(this,_jsHelper)}/>
                 </div>
             )
         }
@@ -362,9 +270,11 @@ class JSONAnalyser extends React.Component{
                         if(flag){
                             this.collapseSet[count]=false;
                         }
+                        let jsHelper=_jsHelper;
+                        jsHelper+='["'+key+'"]';
                         return(
-                            <div className="object-wrapper" style={this.analysedStyle['object_parent_wrapper']} key={randStr+ind}>
-                                <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} onClick={this.handleCollapse.bind(this,count)} >
+                            <div className="object-wrapper" style={this.style['object_parent_wrapper']} key={randStr+ind}>
+                                <div className="collapsable" data-count={count} style={this.style['collapsable-icon']} onClick={this.handleCollapse.bind(this,count)} >
                                     {!flag?
                                         this.collapseSet[count]?
                                             <img src="img/expandIcon.png" style={this.style['plusIcon']}></img>
@@ -374,8 +284,8 @@ class JSONAnalyser extends React.Component{
                                         null
                                     }
                                 </div>
-                                <div className="object-key"  ref={"object-key"+count} style={flag?this.analysedStyle['keyIndStyle']:this.analysedStyle['keyIndFloatStyle']} >
-                                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(key)}} />
+                                <div className="object-key"  ref={"object-key"+count} style={flag?this.style['keyIndStyle']:this.style['keyIndFloatStyle']} >
+                                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(key)}} onClick={this.handleJSHelper.bind(this,'Object.keys('+_jsHelper+')['+ind+']')}/>
                                     {flag?
                                         <span>:</span>
                                     :
@@ -383,15 +293,15 @@ class JSONAnalyser extends React.Component{
                                     }
                                 </div>
                                 {!flag?
-                                    <span className="valHint" style={this.analysedStyle['valHint']} >
+                                    <span className="valHint" style={this.style['valHint']} >
                                         {this.valueHint(subType,val[key])}
                                     </span>
                                 :
                                     null
                                 }
-                                <div className='' style={this.collapseSet[count]?this.analysedStyle['hide']:{}}>
-                                    <div className="object-val" style={flag?this.analysedStyle['valStyle']:{}}>
-                                        {this.analyser(val[key])}
+                                <div className='' style={this.collapseSet[count]?this.style['hide']:{}}>
+                                    <div className="object-val" style={flag?this.style['valStyle']:{}}>
+                                        {this.analyser(val[key],jsHelper)}
                                     </div>
                                 </div>
                             </div>
@@ -400,8 +310,7 @@ class JSONAnalyser extends React.Component{
                 </div>
             )
         }
-        else if(type==='Array'){
-            
+        else if(type==='Array'){            
             return(
                 <div className="array_parent_wrapper" style={this.style['array_parent_wrapper']} >
                     {val.map((json,ind)=>{
@@ -416,9 +325,11 @@ class JSONAnalyser extends React.Component{
                         if(flag){
                             this.collapseSet[count]=false;
                         }
+                        let jsHelper=_jsHelper;
+                        jsHelper+='["'+ind+'"]';
                         return(
-                            <div className="array-wrapper" style={this.analysedStyle['object_parent_wrapper']} key={randStr+ind}>
-                                <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} onClick={this.handleCollapse.bind(this,count)} >
+                            <div className="array-wrapper" style={this.style['object_parent_wrapper']} key={randStr+ind}>
+                                <div className="collapsable" data-count={count} style={this.style['collapsable-icon']} onClick={this.handleCollapse.bind(this,count)} >
                                     {!flag?
                                         this.collapseSet[count]?
                                             <img src="img/expandIcon.png" style={this.style['plusIcon']}></img>
@@ -428,8 +339,8 @@ class JSONAnalyser extends React.Component{
                                         null
                                     }
                                 </div>
-                                <div className="array-ind" ref={"array-ind"+count} style={flag?this.analysedStyle['keyIndStyle']:this.analysedStyle['keyIndFloatStyle']} >
-                                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(ind)}} />
+                                <div className="array-ind" ref={"array-ind"+count} style={flag?this.style['keyIndStyle']:this.style['keyIndFloatStyle']} >
+                                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(ind)}}  onClick={this.handleJSHelper.bind(this,'Object.keys('+_jsHelper+')['+ind+']')}/>
                                     {flag?
                                         <span>:</span>
                                     :
@@ -437,15 +348,15 @@ class JSONAnalyser extends React.Component{
                                     }
                                 </div>
                                 {!flag?
-                                    <span className="valHint" style={this.analysedStyle['valHint']} >
+                                    <span className="valHint" style={this.style['valHint']} >
                                         {this.valueHint(subType,json)}
                                     </span>
                                 :
                                     null
                                 }
-                                <div className='' style={this.collapseSet[count]?this.analysedStyle['hide']:{}}>
-                                    <div className="array-val" style={flag?this.analysedStyle['valStyle']:{}}>
-                                        {this.analyser(json)}
+                                <div className='' style={this.collapseSet[count]?this.style['hide']:{}}>
+                                    <div className="array-val" style={flag?this.style['valStyle']:{}}>
+                                        {this.analyser(json,jsHelper)}
                                     </div>
                                 </div>
                             </div>
@@ -468,6 +379,7 @@ class JSONAnalyser extends React.Component{
         })
     }
     render(){
+        this.style=styleGen();
         this.count=-1;
         this.searchedWord.matchedRefs=[];
         this.highLightCount=-1;
@@ -476,33 +388,36 @@ class JSONAnalyser extends React.Component{
         this.count++;
         let count=this.count;
         
+        
         if(!(this.collapseSet[count])){
             this.collapseSet.push(true);
         }
         if(flag){
             this.collapseSet[count]=false;
         }
-        console.log("render",this);
-       
+        let jsHelper='_object';
         return(
             <div className="jsonanalyser_container" style={this.style['container']}>
-                <div className="lhs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.fullScreenStyle['lhs']):this.style['innerContainer']}>
+                <div className="lhs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.style['lhs']):this.style['innerContainer']}>
                     <div className="lhs_header">
                         <span className="lhs_header_title">
                             Input
                         </span>
                        
                     </div>
-                    <div className="lhs_editor" ref="lhs" contentEditable={"true"} style={this.style['editor']}>
+                    <div className="errorHelper">
+                        {this.errorHelper===''?'':this.errorHelper}
+                    </div>
+                    <div className="lhs_editor" ref="lhs" contentEditable={"true"} style={this.style['lhsEditor']}>
                     </div>
                 </div>
-                <div className="cs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.fullScreenStyle['cs']):this.style['innerContainer']}>
+                <div className="cs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.style['cs']):this.style['innerContainer']}>
                     <div className="right_arrow_container" style={this.style['right_arrow_container']}>
                        {/*  <img src="img/rightArrow.png" className="rightArrow_img"></img> */}
                        <button  onClick={this.handleAnalyser.bind(this)}>Analyse</button>
                     </div>
                 </div>
-                <div className="rhs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.fullScreenStyle['rhs']):this.style['innerContainer']}>
+                <div className="rhs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.style['rhs']):this.style['innerContainer']}>
                     <div className="rhs_header">
                         <span className="rhs_header_title">
                             Output
@@ -532,8 +447,11 @@ class JSONAnalyser extends React.Component{
                             
                         </span>                    
                     </div>
-                    <div className="rhs_editor" style={this.style['editor']}>
-                        <div className="collapsable" data-count={count} style={this.analysedStyle['collapsable-icon']} >
+                    <div className="jsHelper">
+                        {this.jsHelperTip===''?'Javascript Helper - Click any node to parse the json (var _object = json)':this.jsHelperTip}
+                    </div>
+                    <div className="rhs_editor" style={this.style['rhsEditor']}>
+                        <div className="collapsable" data-count={count} style={this.style['collapsable-icon']} >
                             {!flag?
                                 this.collapseSet[count]?
                                     <img src="img/expandIcon.png" style={this.style['plusIcon']} onClick={this.handleCollapse.bind(this,count)} ></img>
@@ -543,11 +461,11 @@ class JSONAnalyser extends React.Component{
                                 null
                             }
                         </div>                   
-                        <span className="valHint" style={this.analysedStyle['valHint']} >
+                        <span className="valHint" style={this.style['valHint']} >
                             {this.valueHint(type,this.jsonToAnalyse)}
                         </span>
-                        <div className=''  style={this.collapseSet[count]?this.analysedStyle['hide']:{}}>
-                            {this.analyser(this.jsonToAnalyse)}
+                        <div className=''  style={this.collapseSet[count]?this.style['hide']:{}}>
+                            {this.analyser(this.jsonToAnalyse,jsHelper)}
                         </div>
                     </div>
                 </div>
