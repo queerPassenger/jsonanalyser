@@ -249,7 +249,7 @@ class JSONAnalyser extends React.Component{
         if(type==='String' || type==='Number' || type==='Date' || type==='Null' || type==='Boolean'){
             let count=this.count;
             return(
-                <div className={"value_wrapper "} ref={"value_wrapper_"+count} style={this.objectCombiner(this.style['valueStyle'],this.style[type+'Val'])}>
+                <div className={"value_wrapper "} ref={"value_wrapper_"+count} title={'DataType :'+type} style={this.objectCombiner(this.style['valueStyle'],this.style[type+'Val'])}>
                     <span dangerouslySetInnerHTML={{__html:this.checkMatch(val)}} onClick={this.handleJSHelper.bind(this,_jsHelper)}/>
                 </div>
             )
@@ -414,7 +414,15 @@ class JSONAnalyser extends React.Component{
                 <div className="cs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.style['cs']):this.style['innerContainer']}>
                     <div className="right_arrow_container" style={this.style['right_arrow_container']}>
                        {/*  <img src="img/rightArrow.png" className="rightArrow_img"></img> */}
-                       <button  onClick={this.handleAnalyser.bind(this)}>Analyse</button>
+                       <div className="dots_wrapper">
+                            <span className="dots">
+                            </span>
+                       </div>
+                       <button  onClick={this.handleAnalyser.bind(this)}>{">"}</button>
+                       <div className="dots_wrapper">
+                            <span className="dots">
+                            </span>
+                       </div>
                     </div>
                 </div>
                 <div className="rhs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.style['rhs']):this.style['innerContainer']}>
