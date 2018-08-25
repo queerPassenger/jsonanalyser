@@ -156,7 +156,7 @@ button{
 }
 
 .currentIndMatch {
-    font-style: italic;
+    background: #4a62a7;
 }
 .jsHelper,.errorHelper{
     width: 98%;

@@ -1,5 +1,5 @@
 import React from 'react';
-import styleGen from './styleHelper.js';
+import styleGen from './inlineStyle.js';
 class JSONAnalyser extends React.Component{
     constructor(props){
         super(props);
@@ -249,7 +249,7 @@ class JSONAnalyser extends React.Component{
         if(type==='String' || type==='Number' || type==='Date' || type==='Null' || type==='Boolean'){
             let count=this.count;
             return(
-                <div className={"value_wrapper "} ref={"value_wrapper_"+count} style={this.style['valueStyle']}>
+                <div className={"value_wrapper "} ref={"value_wrapper_"+count} style={this.objectCombiner(this.style['valueStyle'],this.style[type+'Val'])}>
                     <span dangerouslySetInnerHTML={{__html:this.checkMatch(val)}} onClick={this.handleJSHelper.bind(this,_jsHelper)}/>
                 </div>
             )

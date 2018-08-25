@@ -67,7 +67,6 @@ const styleGen=()=>{
     style['valueStyle']={
         fontSize:'16px',
         fontFamily:'Source Code Pro',
-        width:'80%',
         display:'inline-block'
     };
     style['collapsable-icon']={
@@ -88,8 +87,23 @@ const styleGen=()=>{
         paddingTop:'4px',
         paddingBottom:'4px',
         paddingLeft:'10px'
-    }
-    
+    };
+    style['StringVal']={
+        color:'red',
+    };
+    style['NullVal']={
+        color:'blue',
+        
+    };
+    style['NumberVal']={
+        color:'green',
+    };
+    style['BooleanVal']={
+        /* color:'pink', */
+    };
+    style['DateVal']={
+        color:'yellow',
+    };
     return style;
 }
 
