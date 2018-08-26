@@ -34,6 +34,10 @@ class JSONAnalyser extends React.Component{
         let json={"array":[1,2,3],"boolean":true,"null":null,"number":123,"object":{"a":"b","c":"d","e":"f"},"string":"Hello World"};
         let defaultInput=JSON.stringify(json, null, "\t");
         this.refs['lhs'].innerText=localStorage.getItem('input')?localStorage.getItem('input'):defaultInput;
+        window.onresize=this.resizeEvent.bind(this);
+    }
+    resizeEvent(){
+        this.renderComponent();
     }
     componentDidUpdate(prevProps, prevState){
         this.refs['searchWordResult'].innerHTML=this.searchedWord.toSearch===''?'':+this.searchedWord.matchedRefs.length===0?'No Results':this.searchedWord.currInd+'/'+this.searchedWord.matchedRefs.length;
@@ -154,59 +158,56 @@ class JSONAnalyser extends React.Component{
             this.searchedWord.currInd=1;
         }
     }
-    findMultipleMatch(_op1,_op2,_operator1,wholeWordMatch){       
+    findMultipleMatch(_op1,_op2,_operator1,wholeWordMatch){
         let _html='';
         let _flag=false;
-        let tempToCheck='';
-        
-        let _strWithoutMatchWord=_op1.split(_op2).join('');
-        if(_strWithoutMatchWord.length===0){
-            this.highLightCount+=1;
-            let refName='highLightCount'+this.highLightCount;            
-            _flag=true;
-            _html='<span class="highlight_search" id='+refName+'>'+_operator1+'</span>';            
-            if(this.searchedWord.matchedRefs.indexOf(refName)===-1){
-                this.searchedWord.matchedRefs.push(refName);
-            }
-        }
-        else{
-            let i=0;
-            for(i=0;i<_strWithoutMatchWord.length;i++){
-                if(_strWithoutMatchWord[i]===_op1[i]){
-                    tempToCheck+=_operator1[i];
-                    if(i===(_strWithoutMatchWord.length-1)){
-                        _html+='<span class="">'+tempToCheck+'</span>';
-                    }
-                }
-                else{
+        let correctStr='';
+        let splitSet=_op1.split(_op2);
+        if(!(splitSet.length===1 && splitSet[0]==='')){
+            for(let i=0;i<splitSet.length;i++){
+                if(splitSet[i]===''){
                     this.highLightCount+=1;
                     let refName='highLightCount'+this.highLightCount;
-                    _flag=true;  
-                    let matchedWord=_operator1.substring(i,i+_op2.length);
-                    _html+='<span class="">'+tempToCheck+'</span><span class="highlight_search" id='+refName+'>'+matchedWord+'</span>';
+                    _html+='<span class="highlight_search" id='+refName+'>'+_operator1.substr(correctStr.length,_op2.length)+'</span>';
+                    correctStr+=_operator1.substr(correctStr.length,_op2.length);
+                    _flag=true;
                     if(this.searchedWord.matchedRefs.indexOf(refName)===-1){
                         this.searchedWord.matchedRefs.push(refName);
                     }
-                    tempToCheck='';
-                    _strWithoutMatchWord=_strWithoutMatchWord.substring(0,i)+matchedWord+_strWithoutMatchWord.substring(i,_strWithoutMatchWord.length);
-                    i=i+matchedWord.length-1;
+                    if(splitSet.length>(i+1)){
+                        if(splitSet[i+1]===''){                            
+                            i+=1;
+                        }
+                    }
+                    
                 }
-            }
-            if(_strWithoutMatchWord.length!==_op1.length){
-                 this.highLightCount+=1;
-                 let refName='highLightCount'+this.highLightCount;
-                _flag=true;
-                _html+='<span class="highlight_search" id='+refName+'>'+_operator1.substring(i,i+_op2.length)+'</span>';
-                if(this.searchedWord.matchedRefs.indexOf(refName)===-1){
-                    this.searchedWord.matchedRefs.push(refName);
+                else{
+                    if(_op1.substr(correctStr.length,splitSet[i].length)===splitSet[i]){
+                        _html+='<span class="" >'+_operator1.substr(correctStr.length,splitSet[i].length)+'</span>';
+                        correctStr+=_operator1.substr(correctStr.length,splitSet[i].length);
+                    }
+                    else{
+                            this.highLightCount+=1;
+                            let refName='highLightCount'+this.highLightCount;
+                            _html+='<span class="highlight_search" id='+refName+'>'+_operator1.substr(correctStr.length,_op2.length)+'</span>';
+                            correctStr+=_operator1.substr(correctStr.length,_op2.length);
+                            _flag=true;
+                            if(this.searchedWord.matchedRefs.indexOf(refName)===-1){
+                                this.searchedWord.matchedRefs.push(refName);
+                            }
+                            i-=1;
+                    }
+                    
                 }
+
+                
             }
         }
         return{
             _html,
             _flag
         }
-    }
+    }  
     checkMatch(valueToCheck){
         let _operator1=valueToCheck+'';
         let _operator2=this.searchedWord.toSearch;
@@ -249,8 +250,8 @@ class JSONAnalyser extends React.Component{
         if(type==='String' || type==='Number' || type==='Date' || type==='Null' || type==='Boolean'){
             let count=this.count;
             return(
-                <div className={"value_wrapper "} ref={"value_wrapper_"+count} title={'DataType :'+type} style={this.objectCombiner(this.style['valueStyle'],this.style[type+'Val'])}>
-                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(val)}} onClick={this.handleJSHelper.bind(this,_jsHelper)}/>
+                <div className={"value_wrapper "} ref={"value_wrapper_"+count} title={'Type :'+type} style={this.objectCombiner(this.style['valueStyle'],this.style[type+'Val'])}>
+                    <span dangerouslySetInnerHTML={{__html:this.checkMatch(val)}} onDoubleClick ={this.handleJSHelper.bind(this,_jsHelper)}/>
                 </div>
             )
         }
@@ -397,7 +398,7 @@ class JSONAnalyser extends React.Component{
         }
         let jsHelper='_object';
         return(
-            <div className="jsonanalyser_container" style={this.style['container']}>
+            <div className="jsonanalyser_container" ref="jsonanalyser_container" style={this.style['container']}>
                 <div className="lhs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.style['lhs']):this.style['innerContainer']}>
                     <div className="lhs_header">
                         <span className="lhs_header_title">
@@ -414,15 +415,15 @@ class JSONAnalyser extends React.Component{
                 <div className="cs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.style['cs']):this.style['innerContainer']}>
                     <div className="right_arrow_container" style={this.style['right_arrow_container']}>
                        {/*  <img src="img/rightArrow.png" className="rightArrow_img"></img> */}
-                       <div className="dots_wrapper">
+                       {/* <div className="dots_wrapper">
                             <span className="dots">
                             </span>
-                       </div>
+                       </div> */}
                        <button  onClick={this.handleAnalyser.bind(this)}>{">"}</button>
-                       <div className="dots_wrapper">
+                       {/* <div className="dots_wrapper">
                             <span className="dots">
                             </span>
-                       </div>
+                       </div> */}
                     </div>
                 </div>
                 <div className="rhs_container" style={this.fullScreen?this.objectCombiner(this.style['innerContainer'],this.style['rhs']):this.style['innerContainer']}>
@@ -456,7 +457,7 @@ class JSONAnalyser extends React.Component{
                         </span>                    
                     </div>
                     <div className="jsHelper">
-                        {this.jsHelperTip===''?'Javascript Helper - Click any node to parse the json (var _object = json)':this.jsHelperTip}
+                        {this.jsHelperTip===''?'Javascript Helper - Double Click any node to parse the json (var _object = json)':this.jsHelperTip}
                     </div>
                     <div className="rhs_editor" style={this.style['rhsEditor']}>
                         <div className="collapsable" data-count={count} style={this.style['collapsable-icon']} >

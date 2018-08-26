@@ -2,6 +2,9 @@ const height={
     header:43,
     footer:37,            
 }
+
+
+
 function getHeight(height){
     if(height<=0){
         return 0
@@ -10,14 +13,16 @@ function getHeight(height){
         return height;
     }
 }
+
 const styleGen=()=>{
+    let screenHeight=window.innerHeight;
     let style={};
     style['container']={
-        height:getHeight(window.innerHeight-(height.header+height.footer)),         
+        height:getHeight(screenHeight-(height.header+height.footer)),         
         background:'#e8e8e8',     
     };
     style['innerContainer']={
-         height:getHeight(window.innerHeight-(height.header+height.footer)-20),
+         height:getHeight(screenHeight-(height.header+height.footer)-20),
          marginTop:10,
          marginBottom:10
     };
@@ -28,13 +33,13 @@ const styleGen=()=>{
         width:'95%',
     }
     style['lhsEditor']={
-         height:getHeight(window.innerHeight-(height.header+height.footer)-20-10-50),
+         height:getHeight(screenHeight-(height.header+height.footer)-20-10-50),
     };
     style['rhsEditor']={
-         height:getHeight(window.innerHeight-(height.header+height.footer)-20-10-50-40),
+         height:getHeight(screenHeight-(height.header+height.footer)-20-10-50-40),
     };
     style['right_arrow_container']={
-         top:getHeight(((window.innerHeight-(height.header+height.footer))/2)-50),               
+         top:getHeight(((screenHeight-(height.header+height.footer))/2)-50),               
     };
     style['plusIcon']={
          width:'20',

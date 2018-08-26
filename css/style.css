@@ -32,7 +32,7 @@ body{
     color: white;
 }
 .lhs_container,.rhs_container{
-    width: 46%;
+    width: 47.5%;
     box-shadow: 1px 16px 22px #a5a5a5;
     float: left;
     font-family: 'Source Code Pro';
@@ -83,7 +83,7 @@ body{
     cursor: pointer;
 }
 .cs_container{
-    width: 6%;
+    width: 5%;
     float: left;  
     
 }
@@ -102,6 +102,10 @@ button{
     border-width: 0px;
     box-shadow: 7px 6px 11px #8a8a8a;
     outline:0px;
+}
+button:active{
+    position:relative;
+    left:1%;
 }
 .right_arrow_container{
     position:relative;
