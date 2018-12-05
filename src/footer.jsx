@@ -8,7 +8,7 @@ class Footer extends React.Component{
         return(
             <div className="footer_container">
                 <div className="author_logo_text">
-                    v6.0.0
+                    v6.0.1
                     @queerpassenger
                 </div>
             </div>
