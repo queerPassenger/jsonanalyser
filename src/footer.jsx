@@ -9,7 +9,7 @@ class Footer extends React.Component{
             <div className="footer_container">
                 <div className="author_logo_text">
                     v6.0.1
-                    @queerpassenger
+                    CC queerpassenger
                 </div>
             </div>
         )
