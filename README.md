@@ -9,7 +9,7 @@ It gives a clear cut differentiation between different data types of the value i
 For those new to JSON and JavaScript, there is a helper utility which helps to parse the needed key or value from the json.
 
 The Demo of the project :
-https://shielded-ocean-77712.herokuapp.com/
+https://jsonanalyser.herokuapp.com/
 
 
 
